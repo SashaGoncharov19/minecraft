@@ -2,18 +2,17 @@
 #include "SFML/Audio.hpp"
 #include <SFML/OpenGL.hpp>
 #include <iostream>
-
-#include "src/include/random.h"
-
-#include "src/include/matrix.hpp"
-#include "src/include/vector.h"
-#include "src/include/cube.h"
-
-constexpr float PI = 3.14159265359;
+#include <valarray>
 
 class MusicController {
 public:
     MusicController() {}
+
+    static void init() {
+        instance = new MusicController;
+    };
+
+    static MusicController* instance;
 
     bool loadMusic(const std::string& filename) {
         if (!music.openFromFile(filename)) {
@@ -36,64 +35,84 @@ private:
     sf::Music music;
 };
 
+MusicController* MusicController::instance;
+
 int main()
 {
+    MusicController::init();
+
     glEnable(GL_TEXTURE_2D);
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Minecraft", sf::Style::Close); // | sf::Style::Fullscreen
 
-    MusicController musicController;
-    musicController.loadMusic("assets/sound/music.wav");
-    musicController.play();
+//    MusicController::instance->loadMusic("assets/sound/music.wav");
+//    MusicController::instance->play()
 
-    Cube cube(Vector3(-100.f, -100.f, 100.f), Vector3(200.f, 200.f, 200.f), Vector3());
-
-    Vector3 cameraPos(0.f, 0.f, 0.f);
-
-    sf::Clock deltaClock;
-    sf::Clock timePassed;
-
-    float randomRotation = 1.f;
+    sf::View camera;
+    sf::Vector2f lastMousePos;
+    float cameraRotationSpeed = 0.1f;
+    float maxRotationSpeed = 1.0f;
+    bool isMouseDragging = false;
 
     while (window.isOpen()) {
         sf::Event event;
-
-        float dt = deltaClock.restart().asSeconds();
-
         while (window.pollEvent(event)) {
 
             switch (event.type) {
                 case sf::Event::Closed:
                     window.close();
                     break;
+
+                case sf::Event::MouseMoved:
+                    if (isMouseDragging) {
+                        // Получение изменения положения курсора мыши
+                        sf::Vector2f mousePos = sf::Vector2f(event.mouseMove.x, event.mouseMove.y);
+                        sf::Vector2f delta = mousePos - lastMousePos;
+
+                        // Обработка изменения камеры по оси X
+                        float rotationX = delta.x * cameraRotationSpeed;
+                        rotationX = std::min(std::max(rotationX, -maxRotationSpeed), maxRotationSpeed);
+                        camera.rotate(rotationX);
+
+                        // Обработка изменения камеры по оси Y
+                        float rotationY = delta.y * cameraRotationSpeed;
+                        rotationY = std::min(std::max(rotationY, -maxRotationSpeed), maxRotationSpeed);
+                        camera.rotate(rotationY);
+
+                        lastMousePos = mousePos;
+                    }
+                    break;
+
+                case sf::Event::MouseButtonPressed:
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        isMouseDragging = true;
+                        lastMousePos = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
+                    }
+                    break;
+
+                case sf::Event::MouseButtonReleased:
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        isMouseDragging = false;
+                    }
+                    break;
             }
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) cameraPos += Vector3(50.f*dt);
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))  cameraPos -= Vector3(50.f*dt);
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))  cameraPos += Vector3(0.f, 50.f*dt);
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))    cameraPos -= Vector3(0.f, 50.f*dt);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            window.close();
+        }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z))     cameraPos += Vector3(0.f, 0.f, 50.f*dt);
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))     cameraPos -= Vector3(0.f, 0.f, 50.f*dt);
+        window.setView(camera);
 
-        randomRotation += (static_cast<float>(rand() % 100) - 50.f) / 1000.f * dt;
+        sf::RectangleShape rect(sf::Vector2f(100, 100));
 
-        cube.rotate(Vector3(PI * dt * .4 * randomRotation, PI * dt * .6 * randomRotation, PI * dt * .34 * randomRotation));
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::J)) cube.rotate(Vector3(-PI / 2 * dt));
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::L)) cube.rotate(Vector3(PI/2 * dt));
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::I)) cube.rotate(Vector3(0.f, -PI/2 * dt));
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::K)) cube.rotate(Vector3(0.f, PI/2 * dt));
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::M)) cube.rotate(Vector3(0.f, 0.f, PI/2 * dt));
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)) cube.rotate(Vector3(0.f, 0.f, -PI/2 * dt));
+        rect.setFillColor(sf::Color::Red);
+        rect.setOrigin(rect.getSize() / 2.0f);
+        rect.setPosition(150.f, 150.f);
 
         window.clear();
 
-        cube.draw(
-                window,
-                cameraPos
-        );
+        window.draw(rect);
 
         window.display();
     }

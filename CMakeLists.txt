@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 project(mygame)
 
-add_executable(mygame main.cpp src/app/cube.cpp src/include/cube.h src/app/vector.cpp src/include/vector.h src/app/matrix.cpp src/include/matrix.hpp src/app/random.cpp src/include/random.h)
+add_executable(
+        mygame main.cpp
+        )
 
 set(CMAKE_CXX_STANDARD 20)
 
