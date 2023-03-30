@@ -45,8 +45,8 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Minecraft", sf::Style::Close); // | sf::Style::Fullscreen
 
-//    MusicController::instance->loadMusic("assets/sound/music.wav");
-//    MusicController::instance->play()
+    MusicController::instance->loadMusic("assets/sound/music.wav");
+    MusicController::instance->play();
 
     sf::View camera;
     sf::Vector2f lastMousePos;
