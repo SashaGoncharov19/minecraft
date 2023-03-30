@@ -2,10 +2,10 @@
 // Created by Sasha on 3/30/2023.
 //
 
-#include "matrix.hpp"
+#include "../include/matrix.hpp"
 
 //Ugly as fuck, I know
-#include "vector.h"
+#include "../include/vector.h"
 
 Matrix matrixMultiplication(Matrix matrix1, Matrix matrix2)
 {

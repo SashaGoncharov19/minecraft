@@ -2,7 +2,7 @@
 // Created by Sasha on 3/30/2023.
 //
 
-#include "vector.h"
+#include "../include/vector.h"
 
 Vector3::Vector3() : Vector3(0.f, 0.f, 0.f) {}
 

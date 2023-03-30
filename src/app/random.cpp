@@ -2,7 +2,7 @@
 // Created by Sasha on 3/30/2023.
 //
 
-#include "random.h"
+#include "../include/random.h"
 
 float randSeed(float seed, float min, float max)
 {

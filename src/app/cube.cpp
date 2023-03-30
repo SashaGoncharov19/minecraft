@@ -2,7 +2,7 @@
 // Created by Sasha on 3/30/2023.
 //
 
-#include "cube.h"
+#include "../include/cube.h"
 
 Cube::Cube(Vector3 pos, Vector3 size, Vector3 rotation)
 {

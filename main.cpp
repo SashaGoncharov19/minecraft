@@ -3,11 +3,11 @@
 #include <SFML/OpenGL.hpp>
 #include <iostream>
 
-#include "random.h"
+#include "src/include/random.h"
 
-#include "matrix.hpp"
-#include "vector.h"
-#include "cube.h"
+#include "src/include/matrix.hpp"
+#include "src/include/vector.h"
+#include "src/include/cube.h"
 
 constexpr float PI = 3.14159265359;
 
@@ -43,7 +43,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "Minecraft", sf::Style::Close); // | sf::Style::Fullscreen
 
     MusicController musicController;
-    musicController.loadMusic("assets/sound.wav");
+    musicController.loadMusic("assets/sound/music.wav");
     musicController.play();
 
     Cube cube(Vector3(-100.f, -100.f, 100.f), Vector3(200.f, 200.f, 200.f), Vector3());
