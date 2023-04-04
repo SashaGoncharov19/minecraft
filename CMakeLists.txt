@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(mygame)
 
-add_executable(
-        mygame main.cpp
-        )
+add_executable(mygame main.cpp src/app/MusicController.cpp)
 
 set(CMAKE_CXX_STANDARD 20)
 
